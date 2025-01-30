@@ -5,7 +5,7 @@
 
 * Modulus
 * Multiplication 
-* Modulus 
+* Permutation
 * Factorial 
 * Percentage 
 * Division 
