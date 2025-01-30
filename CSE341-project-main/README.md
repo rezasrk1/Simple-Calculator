@@ -2,8 +2,8 @@
 
 ## Features 
 
-* Plus 
-* Minus 
+
+* Modulus
 * Multiplication 
 * Modulus 
 * Factorial 
