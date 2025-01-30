@@ -28,7 +28,8 @@ msg5 db  0dh,0ah ,'thank you for using the calculator! press any key... ', 0Dh,0
 err1 db  "wrong operator!", 0Dh,0Ah , '$'
 smth db  " and something.... $"
 msg8 db  " and something.... $"           
-err_divide_by_zero db  " and something yee.err_divide_by_zero... $" 
+err_divide_by_zero db  " and something yee.err_divide_by_zero... $"  
+permutation_array dw 10 dup(?)
 
 ; operator can be: '+','-','*','/' or 'q' to exit in the middle.
 opr db '?'
@@ -91,23 +92,8 @@ cmp opr, '!'
 jb wrong_opr
 je factorial     
 
-
 cmp opr, 'p'
-je do_divide_by_100 
-        
-cmp opr, '/'
-ja check_power
-       
-    
-check_power:
-cmp opr, '^'
-
-cmp opr, 'r'
-je do_sqrroot
-ja wrong_opr 
-
-
-
+je do_permutation
 
 lea dx, msg3
 mov ah, 09h
@@ -129,26 +115,11 @@ int 21h
 
 
 
-cmp opr, '+'
-je do_plus
-
-cmp opr, '-'
-je do_minus
-
-cmp opr, '*'
-je do_mult
 
 cmp opr, '/'
 je do_div
 
-cmp opr, '%'
-je do_modulus
 
-cmp opr, '^'
-je do_power
-
-cmp opr, 'p'
-je do_divide_by_100
  
 cmp opr, '!'
 je factorial
@@ -197,126 +168,86 @@ call print_num ; print ax value.
 ret  ; return to the main calculation loop
 
 
-do_divide_by_100:
-mov ax, num1
-mov dx, 0
-mov bx, 100
-idiv bx
-call print_num   ; print ax value.
-jmp exit
+
+do_permutation:
+    ; Prompt for both numbers
+    lea dx, msg1
+    mov ah, 09h
+    int 21h
+
+    call scan_num
+    mov num1, cx
+
+    putc 0Dh
+    putc 0Ah
+
+    lea dx, msg3
+    mov ah, 09h
+    int 21h
+
+    call scan_num
+    mov num2, cx
+
+    ; Print msg8 before performing the permutation calculation
+    lea dx, msg8
+    mov ah, 09h
+    int 21h
+
+    ; Perform the permutation calculation
+    ; Initialize variables
+    mov ax, num1   ; Number of elements (n)
+    mov bx, num2   ; Size of each permutation (k)
+
+    ; Calculate n! (factorial of num1)
+    mov dx, 1       ; Initialize the factorial value
+    mov cx, ax      ; Copy of num1 to use as loop counter
+factorial_loop:
+    mul cx          ; Multiply dx:ax by cx
+    dec cx          ; Decrement cx
+    jnz factorial_loop  ; Loop until cx becomes zero
+
+    ; Calculate (n-k)!
+    sub ax, bx      ; Calculate (n-k)
+    mov cx, ax      ; Copy of (n-k) to use as loop counter
+    mov di, 1       ; Initialize the factorial value
+factorial_loop2:
+    mul cx          ; Multiply di:ax by cx
+    dec cx          ; Decrement cx
+    jnz factorial_loop2 ; Loop until cx becomes zero
+
+    ; Divide n! by (n-k)! to get the result
+    div di          ; Divide dx:ax by di
+    ; Now, ax contains the result, which is the number of permutations
+
+    ; Print a newline character before printing the result
+    putc 0Dh
+    putc 0Ah
+
+    ; Print the result
+    call print_num  ; Print the calculated permutation count
+
+    ret
 
 
-do_modulus:
-mov ax, num1
-mov dx, 0
-idiv num2
-mov ax, dx
-call print_num
-jmp exit
 
 
-do_power:
-mov ax, num1
-mov cx, num2
-dec cx
-power_loop:
-mul num1
-loop power_loop
-call print_num    ; print ax value.
-jmp exit
-     
-do_plus:
 
 
-mov ax, num1
-add ax, num2
-call print_num    ; print ax value.
- 
-jmp exit
-
-           
-do_minus:
-
-mov ax, num1
-sub ax, num2
-call print_num    ; print ax value.
-
-jmp exit
-
-        
-do_mult:
-
-mov ax, num1
-imul num2 ; (dx ax) = ax * num2. 
-call print_num    ; print ax value.
-; dx is ignored (calc works with tiny numbers only).
-
-jmp exit  
 
 
-do_sqrroot:
-
- mov ax,cx
- mov dx,cx
-            
-           
-             
-            
-            mov bx,1  
-            
-            
-            div_loop:
-            
-            
-    
-            
-            div bl
-            
-            sub al,bl
-            
-            
-            
-            cmp al,0h
-            
-            jle print
-            
-            mov ax,dx
-            
-            inc bl 
-            
-            jmp div_loop
-            
-            
-            
- print: 
-        mov ah,2
-        mov dl,0Ah
-        int 21h
-        mov dl,0Dh
-        int 21h 
-        
-        mov ah,9
-
-        lea dx, msg4
-
-        int 21h
-        
-        
-        mov dl,bl
-        
-        add dl,30h
-        
-        mov ah,2
-        int 21h 
-        
-        
-        jmp done
 
 
-done:
-lea dx, msg5
-mov ah, 09h
-int 21h 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -339,14 +270,6 @@ lea dx, smth
 mov ah, 09h    ; output string at ds:dx
 int 21h  
 jmp exit
-
-
-
-
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; library emu8086.inc ;;;
@@ -650,3 +573,5 @@ POP     CX
 POP     AX
 RET
 GET_STRING ENDP
+
+;just add here permutation term
