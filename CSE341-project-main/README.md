@@ -33,7 +33,7 @@
 <img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="reza" height="30" width="40" /></a>
 
 
-<a href="[https://www.linkedin.com/in/ashak-odree/](https://www.linkedin.com/in/saiful-islam-reza-090b49171/)" target="blank">
+<a href="https://www.linkedin.com/in/saiful-islam-reza-090b49171/" target="blank">
 <img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="Saiful Islam Reza" height="30" width="40" /></a>
 
 
